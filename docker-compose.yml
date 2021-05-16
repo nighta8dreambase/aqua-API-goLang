@@ -1,0 +1,53 @@
+version: '3'
+services:
+  app:
+    image: aqua:v1
+    container_name: aqua
+    ports: 
+      - 8080:8080 
+    restart: on-failure
+    depends_on:
+      - mysql          
+    volumes:
+      - .:/Aqua
+    networks:
+      - fullstack
+
+  mysql:
+    image: mysql:5.7.22
+    container_name: mysql
+    ports: 
+      - 3306:3306
+    environment: 
+      - MYSQL_ROOT_HOST=${DB_HOST} 
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      #- "/c/mysql-data:/var/lib/mysql"
+      - ./mysqldata:/var/lib/mysql
+    networks:
+      - fullstack
+
+  pma:
+        image: phpmyadmin/phpmyadmin
+        depends_on:
+          - mysql
+        ports:
+          - 5003:80
+        environment:
+          - PMA_HOST=mysql # Note the "fullstack-mysql". Must be the name of the what you used as the mysql service.
+          - PMA_USER=${DB_USER}
+          - PMA_PORT=${DB_PORT}
+          - PMA_PASSWORD=${DB_PASSWORD}
+        container_name: myadmin
+        networks:
+          - fullstack
+
+volumes:
+  mysqldata:
+    
+networks:
+  fullstack:
+    driver: bridge
