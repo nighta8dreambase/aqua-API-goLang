@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/TanutN/Aqua/api"
-)
+import "github.com/TanutN/Aqua/api"
 
 func main() {
 
